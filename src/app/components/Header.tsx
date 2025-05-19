@@ -3,12 +3,19 @@
 
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   return (
     <header className="bg-black text-white px-6 py-4 flex items-center justify-between">
       <Link href="/">
-        <h1 className="text-xl font-bold">Minikaniko</h1>
+        <Image
+          src="/assets/Logo.jpg"
+          alt="Minikaniko Logo"
+          width={40}
+          height={40}
+          className="object-contain"
+        />
       </Link>
 
       <div>
