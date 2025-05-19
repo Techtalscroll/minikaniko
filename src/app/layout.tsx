@@ -1,4 +1,3 @@
-// filepath: c:\Users\Exzur\minikaniko\src\app\layout.tsx
 import './globals.css';
 import Header from './components/Header';
 import type { Metadata } from 'next';
