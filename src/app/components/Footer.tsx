@@ -35,7 +35,7 @@ function Footer() {
         {/* Right side: Copyright */}
         <div className="text-sm">
           <p>
-            Copyright &copy; {new Date().getFullYear()} – All rights reserved
+            &copy; {new Date().getFullYear()} Minikaniko. All rights reserved.
           </p>
         </div>
       </div>
