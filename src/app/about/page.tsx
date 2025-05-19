@@ -28,16 +28,46 @@ export default function AboutPage() {
 
           <h1 className="text-2xl font-bold">Contact Us</h1>
           <ul className="list-disc list-inside space-y-1">
-            <li>📧 minikaniko@gmail</li>
-            <li>📞 Telephone (043)756-0412 / (043)4041928</li>
+            <li>📧 minikanikoburgerstation@gmail</li>
+            <li>📞 Telephone 09999938055</li>
             <li>
               🌐{' '}
               <a
-                href="https://www.facebook.com/profile.php?id=100075933948097"
+                href="https://www.facebook.com/profile.php?id=100075827272564"
                 className="text-blue-600 hover:underline"
                 target="_blank"
               >
-                Facebook Profile
+                Minikaniko Burger Station - Mauban Branch
+              </a>
+            </li>
+            <li>
+              🌐{' '}
+              <a
+                href="https://www.facebook.com/profile.php?id=100083049406555"
+                className="text-blue-600 hover:underline"
+                target="_blank"
+              >
+                Minikaniko Burger Station - Pagbilao Branch
+              </a>
+            </li>
+            <li>
+              🌐{' '}
+              <a
+                href="https://www.facebook.com/profile.php?id=100085304899233"
+                className="text-blue-600 hover:underline"
+                target="_blank"
+              >
+                Minikaniko Burger Station - Lucena Branch 
+              </a>
+            </li>
+            <li>
+              🌐{' '}
+              <a
+                href="https://www.facebook.com/profile.php?id=61559769086139"
+                className="text-blue-600 hover:underline"
+                target="_blank"
+              >
+                Minikaniko Burger Station - San Pablo Branch 
               </a>
             </li>
           </ul>
