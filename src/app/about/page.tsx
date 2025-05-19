@@ -78,8 +78,8 @@ export default function AboutPage() {
           <Image
             src="/assets/owner.jpg" // This image must exist in public/assets/
             alt="Owner"
-            width={250}
-            height={300}
+            width={300}
+            height={350}
             className="rounded-lg object-cover"
           />
         </div>
