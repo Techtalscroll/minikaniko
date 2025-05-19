@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main
@@ -9,9 +11,11 @@ export default function Home() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6">
             SUPER <br /> DELICIOUS <br /> BURGER
           </h1>
-          <button className="bg-white text-black font-semibold px-6 py-3 rounded shadow hover:bg-gray-200 transition">
-            ORDER NOW
-          </button>
+          <Link href="/profile">
+            <button className="bg-white text-black font-semibold px-6 py-3 rounded shadow hover:bg-gray-200 transition">
+              ORDER NOW
+            </button>
+          </Link>
         </div>
       </div>
     </main>
