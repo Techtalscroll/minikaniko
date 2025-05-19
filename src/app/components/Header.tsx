@@ -12,7 +12,7 @@ export default function Header() {
         <Image
           src="/assets/Logo.jpg"
           alt="Minikaniko Logo"
-          width={40}
+          width={200}
           height={40}
           className="object-contain"
         />
