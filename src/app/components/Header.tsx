@@ -1,30 +1,27 @@
+// components/Header.tsx
 'use client';
 
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
+import { SignInButton, SignOutButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="bg-black shadow-sm flex items-center justify-between px-6 py-4">
-      {/* Logo Button */}
-      <button
-        onClick={() => window.location.href = '/'}
-        className="text-xl font-bold text-white-800 hover:opacity-80 transition"
-      >
-        Minikaniko
-      </button>
+    <header className="bg-black text-white px-6 py-4 flex items-center justify-between">
+      <Link href="/">
+        <h1 className="text-xl font-bold">Minikaniko</h1>
+      </Link>
 
-      {/* Auth Area */}
       <div>
         <SignedOut>
-          <SignInButton mode="redirect" forceRedirectUrl="/">
-            <button className="bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition">
+          <SignInButton mode="modal">
+            <button className="bg-white text-black px-4 py-2 rounded hover:bg-gray-200">
               Login
             </button>
           </SignInButton>
         </SignedOut>
 
         <SignedIn>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </SignedIn>
       </div>
     </header>
