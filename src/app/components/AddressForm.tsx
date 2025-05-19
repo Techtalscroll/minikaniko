@@ -1,44 +1,39 @@
 // src/app/components/AddressForm.tsx
-"use client";
-
+'use client';
 import { useState } from "react";
 
 export default function AddressForm() {
   const [address, setAddress] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    const res = await fetch("/api/address", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address }),
-    });
-
-    setLoading(false);
-    setSuccess(res.ok);
+    // TODO: Send address to your API
+    setSubmitted(true);
   };
 
+  if (submitted) {
+    return <div className="text-green-600 font-bold">Address submitted! Thank you.</div>;
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        type="text"
-        placeholder="Enter your address"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-        className="border px-4 py-2 rounded w-full"
-      />
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <label className="font-semibold">
+        Delivery Address:
+        <input
+          type="text"
+          value={address}
+          onChange={e => setAddress(e.target.value)}
+          className="mt-2 p-2 border rounded w-full text-black"
+          required
+        />
+      </label>
       <button
         type="submit"
-        disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
+        className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
       >
-        {loading ? "Saving..." : "Save Address"}
+        Submit
       </button>
-      {success && <p className="text-green-600">Address saved!</p>}
     </form>
   );
 }
