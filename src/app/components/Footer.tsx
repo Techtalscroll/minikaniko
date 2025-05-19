@@ -1,37 +1,7 @@
-import Link from 'next/link';
-
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#000000] text-white py-8 px-4">
-      <div className="max-w-6xl mx-auto text-center space-y-4">
-        {/* Group Members */}
-        <div>
-          <p className="font-semibold">Group Project by</p>
-          <p>Exzur Lat</p>
-          <p>Jan Renan Leovido</p>
-          <p>Kurt Jerven Panaligan</p>
-          <p>Gabriel La Rosa</p>
-        </div>
-
-        {/* Bottom Row: Left, Center, Right */}
-        <div className="flex justify-between items-center text-base pt-4 flex-wrap gap-y-2">
-          {/* Left: Label */}
-          <span className="text-white">Minikaniko</span>
-
-          {/* Center: Copyright */}
-          <span className="text-white text-center w-full md:w-auto order-last md:order-none">
-            © {new Date().getFullYear()} – All rights reserved
-          </span>
-
-          {/* Right: About Us */}
-          <Link
-            href="/about"
-            className="text-white hover:underline transition duration-200"
-          >
-            About Us
-          </Link>
-        </div>
-      </div>
+    <footer className="bg-black text-white text-center py-4 mt-auto">
+      <span>&copy; {new Date().getFullYear()} Minikaniko. All rights reserved.</span>
     </footer>
   );
 }
