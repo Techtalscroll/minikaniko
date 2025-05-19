@@ -1,6 +1,6 @@
 'use client';
 import { useState } from "react";
-import AddressForm from "./components/AddressForm";
+import AddressForm from "./order/OrderForm";
 
 export default function Home() {
   const [showForm, setShowForm] = useState(false);
