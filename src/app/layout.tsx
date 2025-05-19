@@ -2,7 +2,7 @@ import './globals.css';
 import Header from './components/Header';
 import type { Metadata } from 'next';
 import Footer from './components/Footer';
-import ClerkProviderWrapper from './components/ClerkProviderWrapper';
+import ClientRoot from './ClientRoot';
 
 export const metadata: Metadata = {
   title: 'Minikaniko',
@@ -13,11 +13,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <ClerkProviderWrapper>
+        <ClientRoot>
           <Header />
           <main>{children}</main>
           <Footer />
-        </ClerkProviderWrapper>
+        </ClientRoot>
       </body>
     </html>
   );
