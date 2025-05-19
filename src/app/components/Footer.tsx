@@ -1,29 +1,10 @@
 import Link from 'next/link';
 
-export default function Home() {
-  return (
-    <div>
-      {/* Other components and content of your page */}
-
-      <Footer />
-    </div>
-  );
-}
-
-function Footer() {
+export default function Footer() {
   return (
     <footer className="w-full bg-[#000000] text-white py-8 px-4">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-4 md:space-y-0">
-        {/* Left side: About Us button */}
-        <div>
-          <Link href="/about">
-            <button className="bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition">
-              About Us
-            </button>
-          </Link>
-        </div>
-
-        {/* Middle: Group Members */}
+      <div className="max-w-6xl mx-auto text-center space-y-4">
+        {/* Group Members */}
         <div>
           <p className="font-semibold">Group Project by</p>
           <p>Exzur Lat</p>
@@ -32,11 +13,23 @@ function Footer() {
           <p>Gabriel La Rosa</p>
         </div>
 
-        {/* Right side: Copyright */}
-        <div className="text-sm">
-          <p>
-            &copy; {new Date().getFullYear()} Minikaniko. All rights reserved.
-          </p>
+        {/* Bottom Row: Left, Center, Right */}
+        <div className="flex justify-between items-center text-base pt-4 flex-wrap gap-y-2">
+          {/* Left: Label */}
+          <span className="text-white">Minikaniko</span>
+
+          {/* Center: Copyright */}
+          <span className="text-white text-center w-full md:w-auto order-last md:order-none">
+            © {new Date().getFullYear()} – All rights reserved
+          </span>
+
+          {/* Right: About Us */}
+          <Link
+            href="/about"
+            className="text-white hover:underline transition duration-200"
+          >
+            About Us
+          </Link>
         </div>
       </div>
     </footer>
