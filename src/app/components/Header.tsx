@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export default function Header() {
   return (
-    <header className="bg-black text-white px-6 py-4 flex items-center justify-between">
+    <header className="bg-black text-white px-6 py-1 flex items-center justify-between">
       <Link href="/">
         <Image
           src="/assets/Logo.jpg"
@@ -21,7 +21,7 @@ export default function Header() {
       <div>
         <SignedOut>
           <SignInButton mode="modal">
-            <button className="bg-white text-black px-4 py-2 rounded hover:bg-gray-200">
+            <button className="bg-white text-black px-10 py-3 rounded hover:bg-gray-200">
               Login
             </button>
           </SignInButton>
