@@ -4,11 +4,11 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 
 export default function Header() {
   return (
-    <header className="bg-white shadow-sm flex items-center justify-between px-6 py-4">
+    <header className="bg-black shadow-sm flex items-center justify-between px-6 py-4">
       {/* Logo Button */}
       <button
         onClick={() => window.location.href = '/'}
-        className="text-xl font-bold text-gray-800 hover:opacity-80 transition"
+        className="text-xl font-bold text-white-800 hover:opacity-80 transition"
       >
         Minikaniko
       </button>

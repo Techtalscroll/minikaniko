@@ -13,21 +13,24 @@ export default function Footer() {
           <p>Gabriel La Rosa</p>
         </div>
 
-        {/* Bottom Row: Minikaniko and About Us */}
-        <div className="flex justify-between items-center text-sm pt-4">
+        {/* Bottom Row: Left, Center, Right */}
+        <div className="flex justify-between items-center text-base pt-4 flex-wrap gap-y-2">
+          {/* Left: Label */}
           <span className="text-white">Minikaniko</span>
 
-          <Link href="/about">
-            <a className="text-white hover:underline transition duration-200">
-              About Us
-            </a>
+          {/* Center: Copyright */}
+          <span className="text-white text-center w-full md:w-auto order-last md:order-none">
+            © {new Date().getFullYear()} – All rights reserved
+          </span>
+
+          {/* Right: About Us */}
+          <Link
+            href="/about"
+            className="text-white hover:underline transition duration-200"
+          >
+            About Us
           </Link>
         </div>
-
-        {/* Copyright */}
-        <p className="text-xs pt-2">
-          Copyright &copy; {new Date().getFullYear()} – All rights reserved
-        </p>
       </div>
     </footer>
   );
