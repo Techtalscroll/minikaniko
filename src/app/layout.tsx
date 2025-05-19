@@ -1,9 +1,9 @@
-// app/layout.tsx
-import { ClerkProvider } from '@clerk/nextjs';
+// filepath: c:\Users\Exzur\minikaniko\src\app\layout.tsx
 import './globals.css';
 import Header from './components/Header';
 import type { Metadata } from 'next';
 import Footer from './components/Footer';
+import ClerkProviderWrapper from './components/ClerkProviderWrapper';
 
 export const metadata: Metadata = {
   title: 'Minikaniko',
@@ -12,14 +12,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body>
+    <html lang="en">
+      <body>
+        <ClerkProviderWrapper>
           <Header />
           <main>{children}</main>
           <Footer />
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProviderWrapper>
+      </body>
+    </html>
   );
 }
