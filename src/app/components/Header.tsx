@@ -11,7 +11,7 @@ export default function Header() {
         <Image
           src="/assets/Logo.jpg"
           alt="Minikaniko Logo"
-          width={40}
+          width={250}
           height={40}
           className="object-contain"
         />
@@ -24,6 +24,7 @@ export default function Header() {
             </button>
           </SignInButton>
         </SignedOut>
+
         <SignedIn>
           <UserButton />
         </SignedIn>
