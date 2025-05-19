@@ -16,7 +16,7 @@ export default function Header() {
       {/* Auth Area */}
       <div>
         <SignedOut>
-          <SignInButton mode="redirect" afterSignInUrl="/">
+          <SignInButton mode="redirect" redirectUrl="/">
             <button className="bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition">
               Login
             </button>
