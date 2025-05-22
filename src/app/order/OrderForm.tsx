@@ -9,7 +9,6 @@ export default function OrderForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Send address to your API
     setSubmitted(true);
   };
 
