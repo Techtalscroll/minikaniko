@@ -170,10 +170,20 @@ export default function AdminDashboard() {
               <h3 className="font-bold mb-2">Current Menu Items:</h3>
               <ul>
                 {menuItems.map((item) => (
-                  <li key={item.id} className="mb-2 border-b pb-2">
-                    <span className="font-semibold">{item.name}</span> — {item.category} — ₱{item.price}
-                    <br />
-                    <span className="text-sm">{item.description}</span>
+                  <li key={item.id} className="mb-2 border-b pb-2 flex items-center gap-4">
+                    {/* Show image if present */}
+                    {item.image && (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    )}
+                    <div>
+                      <span className="font-semibold">{item.name}</span> — {item.category} — ₱{item.price}
+                      <br />
+                      <span className="text-sm">{item.description}</span>
+                    </div>
                   </li>
                 ))}
               </ul>
