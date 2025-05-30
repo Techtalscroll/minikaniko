@@ -153,7 +153,7 @@ export default function MenuPage() {
     // Save to Supabase
     const { error } = await supabase.from("orders").insert([orderData]);
     if (error) {
-      alert("Failed to place order. Please try again.");
+      alert("Failed to place order.\n" + JSON.stringify(error, null, 2));
       return;
     }
     alert("Order placed successfully!");
