@@ -117,18 +117,6 @@ export default function MenuPage() {
     }
   }
 
-  // Add this function to handle address deletion:
-  async function handleDeleteAddress(addr: string) {
-    if (userId) {
-      await supabase
-        .from("user_addresses")
-        .delete()
-        .eq("user_id", userId)
-        .eq("address", addr);
-      setAddressList(prev => prev.filter(a => a !== addr));
-      if (address === addr) setAddress("");
-    }
-  }
 
   async function handleCheckout() {
     if (cart.length === 0) {

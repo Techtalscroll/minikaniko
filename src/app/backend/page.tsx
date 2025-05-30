@@ -12,11 +12,18 @@ type MenuItem = {
   description: string;
 };
 
+type OrderItem = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+};
+
 type Order = {
   id: number;
   user_id: string;
   user_name: string;
-  items: any[];
+  items: OrderItem[];
   total_price: number;
   address: string;
   order_type: string;
