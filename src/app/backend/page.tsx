@@ -12,12 +12,21 @@ type MenuItem = {
   description: string;
 };
 
-export default function AdminDashboard() {
-  const [activePage, setActivePage] = useState<
-    "menu" | "orders1" | "orders2" | "orders3" | "orders4"
-  >("menu");
+type Order = {
+  id: number;
+  user_id: string;
+  user_name: string;
+  items: any[];
+  total_price: number;
+  address: string;
+  order_type: string;
+  created_at: string;
+};
 
+export default function AdminDashboard() {
+  const [activePage, setActivePage] = useState<"menu" | "orders">("menu");
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [form, setForm] = useState<{
     id: number | undefined;
     image: string;
@@ -34,13 +43,20 @@ export default function AdminDashboard() {
     description: "",
   });
 
-  // Fetch menu items from Supabase
+  // Fetch menu items and orders from Supabase
   useEffect(() => {
     if (activePage === "menu") {
       supabase
         .from("menu")
         .select("*")
         .then(({ data }: { data: MenuItem[] | null }) => setMenuItems(data || []));
+    }
+    if (activePage === "orders") {
+      supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .then(({ data }: { data: Order[] | null }) => setOrders(data || []));
     }
   }, [activePage]);
 
@@ -143,43 +159,13 @@ export default function AdminDashboard() {
         </button>
         <button
           className={`text-left px-4 py-2 rounded font-semibold transition ${
-            activePage === "orders1"
+            activePage === "orders"
               ? "bg-white text-black"
               : "hover:bg-gray-800"
           }`}
-          onClick={() => setActivePage("orders1")}
+          onClick={() => setActivePage("orders")}
         >
-          Lucena Order Dashboard
-        </button>
-        <button
-          className={`text-left px-4 py-2 rounded font-semibold transition ${
-            activePage === "orders2"
-              ? "bg-white text-black"
-              : "hover:bg-gray-800"
-          }`}
-          onClick={() => setActivePage("orders2")}
-        >
-          Mauban Order Dashboard
-        </button>
-        <button
-          className={`text-left px-4 py-2 rounded font-semibold transition ${
-            activePage === "orders3"
-              ? "bg-white text-black"
-              : "hover:bg-gray-800"
-          }`}
-          onClick={() => setActivePage("orders3")}
-        >
-          Pagbilao Order Dashboard
-        </button>
-        <button
-          className={`text-left px-4 py-2 rounded font-semibold transition ${
-            activePage === "orders4"
-              ? "bg-white text-black"
-              : "hover:bg-gray-800"
-          }`}
-          onClick={() => setActivePage("orders4")}
-        >
-          San Pablo Order Dashboard
+          Admin Order Dashboard
         </button>
       </aside>
 
@@ -284,28 +270,51 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
-        {activePage === "orders1" && (
+        {activePage === "orders" && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Lucena Order Dashboard</h2>
-            <p>View and manage orders here.</p>
-          </div>
-        )}
-        {activePage === "orders2" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Mauban Order Dashboard</h2>
-            <p>View and manage orders here.</p>
-          </div>
-        )}
-        {activePage === "orders3" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Pagbilao Order Dashboard</h2>
-            <p>View and manage orders here.</p>
-          </div>
-        )}
-        {activePage === "orders4" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">San Pablo Order Dashboard</h2>
-            <p>View and manage orders here.</p>
+            <h2 className="text-2xl font-bold mb-4">Admin Order Dashboard</h2>
+            {orders.length === 0 ? (
+              <p>No orders found.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-white rounded shadow">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2 border">Order ID</th>
+                      <th className="px-4 py-2 border">User</th>
+                      <th className="px-4 py-2 border">Type</th>
+                      <th className="px-4 py-2 border">Address</th>
+                      <th className="px-4 py-2 border">Items</th>
+                      <th className="px-4 py-2 border">Total Price</th>
+                      <th className="px-4 py-2 border">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map(order => (
+                      <tr key={order.id}>
+                        <td className="px-4 py-2 border">{order.id}</td>
+                        <td className="px-4 py-2 border">{order.user_name}</td>
+                        <td className="px-4 py-2 border">{order.order_type}</td>
+                        <td className="px-4 py-2 border">{order.address}</td>
+                        <td className="px-4 py-2 border">
+                          <ul>
+                            {order.items.map((item, idx) => (
+                              <li key={idx}>
+                                {item.name} x{item.quantity} (₱{item.price})
+                              </li>
+                            ))}
+                          </ul>
+                        </td>
+                        <td className="px-4 py-2 border">₱{order.total_price}</td>
+                        <td className="px-4 py-2 border">
+                          {new Date(order.created_at).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
       </section>
