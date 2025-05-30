@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 type MenuItem = {
-  _id?: string;
+  id?: number;
   image: string;
   name: string;
   category: string;
@@ -16,7 +17,6 @@ export default function AdminDashboard() {
     "menu" | "orders1" | "orders2" | "orders3" | "orders4"
   >("menu");
 
-  // Use MenuItem[] instead of any[]
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [form, setForm] = useState({
     image: "",
@@ -26,12 +26,13 @@ export default function AdminDashboard() {
     description: "",
   });
 
-  // Fetch menu items on mount or after adding
+  // Fetch menu items from Supabase
   useEffect(() => {
     if (activePage === "menu") {
-      fetch("/api/menu")
-        .then((res) => res.json())
-        .then(setMenuItems);
+      supabase
+        .from("menu")
+        .select("*")
+        .then(({ data }: { data: MenuItem[] | null }) => setMenuItems(data || []));
     }
   }, [activePage]);
 
@@ -43,16 +44,16 @@ export default function AdminDashboard() {
   // Handle form submit
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await fetch("/api/menu", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, price: Number(form.price) }),
-    });
+    await supabase.from("menu").insert([
+      {
+        ...form,
+        price: Number(form.price),
+      },
+    ]);
     setForm({ image: "", name: "", category: "", price: "", description: "" });
     // Refresh menu items
-    fetch("/api/menu")
-      .then((res) => res.json())
-      .then(setMenuItems);
+    const { data } = await supabase.from("menu").select("*");
+    setMenuItems(data || []);
   }
 
   return (
@@ -169,7 +170,7 @@ export default function AdminDashboard() {
               <h3 className="font-bold mb-2">Current Menu Items:</h3>
               <ul>
                 {menuItems.map((item) => (
-                  <li key={item._id} className="mb-2 border-b pb-2">
+                  <li key={item.id} className="mb-2 border-b pb-2">
                     <span className="font-semibold">{item.name}</span> — {item.category} — ₱{item.price}
                     <br />
                     <span className="text-sm">{item.description}</span>
