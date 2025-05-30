@@ -67,19 +67,16 @@ export default function AdminDashboard() {
     }
   }, [activePage]);
 
-  // Handle form input change
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  // Handle file upload to Supabase Storage
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Upload to Supabase Storage
     const { data, error } = await supabase.storage
       .from("menu-images")
       .upload(`public/${Date.now()}_${file.name}`, file);
@@ -89,7 +86,6 @@ export default function AdminDashboard() {
       return;
     }
 
-    // Get public URL
     const { data: urlData } = supabase.storage
       .from("menu-images")
       .getPublicUrl(data.path);
@@ -97,7 +93,6 @@ export default function AdminDashboard() {
     setForm({ ...form, image: urlData.publicUrl });
   }
 
-  // Handle form submit
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (Number(form.price) < 0) {
@@ -105,7 +100,6 @@ export default function AdminDashboard() {
       return;
     }
     if (form.id) {
-      // Update
       await supabase.from("menu").update({
         image: form.image,
         name: form.name,
@@ -114,7 +108,6 @@ export default function AdminDashboard() {
         description: form.description,
       }).eq("id", form.id);
     } else {
-      // Insert
       await supabase.from("menu").insert([
         {
           image: form.image,
@@ -130,11 +123,10 @@ export default function AdminDashboard() {
     setMenuItems(data || []);
   }
 
-  // Handle delete
   async function handleDelete(id: number | undefined) {
     if (!id) return;
     await supabase.from("menu").delete().eq("id", id);
-    // Refresh menu items
+
     const { data } = await supabase.from("menu").select("*");
     setMenuItems(data || []);
   }
@@ -146,13 +138,12 @@ export default function AdminDashboard() {
       category: item.category,
       price: String(item.price),
       description: item.description,
-      id: item.id, // Add id to form for editing
+      id: item.id,
     });
   }
 
   return (
     <main className="min-h-screen flex bg-gray-100">
-      {/* Sidebar */}
       <aside className="w-64 bg-black text-white flex flex-col p-6 gap-4">
         <button
           className={`text-left px-4 py-2 rounded font-semibold transition ${
@@ -182,7 +173,6 @@ export default function AdminDashboard() {
           <div>
             <h2 className="text-2xl font-bold mb-4">Menu Management System</h2>
             <form onSubmit={handleSubmit} className="mb-8 bg-white rounded p-4 shadow flex flex-col gap-4 max-w-lg">
-              {/* File picker for image */}
               <input
                 type="file"
                 accept="image/*"
@@ -190,7 +180,6 @@ export default function AdminDashboard() {
                 className="border rounded px-3 py-2"
                 required={!form.image}
               />
-              {/* Show preview if image is uploaded */}
               {form.image && (
                 <img src={form.image} alt="Preview" className="w-24 h-24 object-cover rounded" />
               )}

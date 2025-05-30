@@ -62,12 +62,11 @@ export default function MenuPage() {
     fetchAddresses();
   }, [userId]);
 
-  // Save address list to localStorage on change
   useEffect(() => {
     localStorage.setItem("addressList", JSON.stringify(addressList));
   }, [addressList]);
 
-  // Filter menu items by selected category
+
   const filteredItems = menuItems.filter(
     (item) => item.category === selectedCategory
   );
@@ -76,12 +75,10 @@ export default function MenuPage() {
     setCart((prev) => {
       const idx = prev.findIndex((ci) => ci.item.id === item.id);
       if (idx > -1) {
-        // Item already in cart, increment quantity
         const updated = [...prev];
         updated[idx] = { ...updated[idx], quantity: updated[idx].quantity + 1 };
         return updated;
       }
-      // New item
       return [...prev, { item, quantity: 1 }];
     });
   }
@@ -102,11 +99,9 @@ export default function MenuPage() {
     }
   }
 
-  // Handler for adding a new address
   async function handleAddAddress() {
     const newAddress = prompt("Enter new delivery address:");
     if (newAddress && !addressList.includes(newAddress) && userId) {
-      // Save to Supabase
       const { error } = await supabase
         .from("user_addresses")
         .insert([{ user_id: userId, address: newAddress }]);
@@ -132,11 +127,9 @@ export default function MenuPage() {
       return;
     }
 
-    // Get Clerk user info
     const userName = user?.username || user?.fullName || user?.emailAddresses?.[0]?.emailAddress || "Unknown";
     const totalPrice = cart.reduce((sum, cartItem) => sum + cartItem.item.price * cartItem.quantity, 0);
 
-    // Prepare order data
     const orderData = {
       user_id: userId,
       user_name: userName,
@@ -185,7 +178,7 @@ export default function MenuPage() {
       </div>
 
       <div className="flex w-full min-h-screen bg-black/40">
-        {/* Categories Sidebar (desktop only) */}
+        {/* Categories Sidebar desktop only */}
         <aside className="hidden md:flex w-0.5/5 bg-black/50 p-6 flex-col gap-2">
           <h2 className="font-bold mb-2 text-white">Categories</h2>
           {categories.map((cat) => (
@@ -234,7 +227,7 @@ export default function MenuPage() {
           </div>
         </section>
 
-        {/* Cart Sidebar (desktop only) */}
+        {/* Cart Sidebar desktop only */}
         <aside className="hidden md:flex w-1/4 bg-black/50 p-6 flex-col gap-4">
           <h2 className="font-bold mb-2">Cart</h2>
           {cart.length === 0 && <div className="text-gray-500">Cart is empty.</div>}

@@ -6,7 +6,6 @@ import Image from "next/image";
 export default function Header() {
   const { user } = useUser();
 
-  // List of allowed admin user IDs
   const adminUserIds = ["user_2xI04m4SHvM9JyKPQ9BlV5V1DNT"];
 
   return (
@@ -21,7 +20,6 @@ export default function Header() {
             className="object-contain"
           />
         </Link>
-        {/* Centered Backend button as plain text */}
         <div className="flex-1 flex justify-center">
           <SignedIn>
             {user && adminUserIds.includes(user.id) && (

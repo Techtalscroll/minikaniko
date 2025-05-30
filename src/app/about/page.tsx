@@ -3,7 +3,6 @@ import Image from 'next/image';
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white text-black">
-      {/* Main Content */}
       <main className="flex flex-col md:flex-row gap-4 md:gap-20 p-6 md:p-20 items-center justify-center max-w-6xl w-full mx-auto">
         <div className="max-w-xl space-y-4">
           <h1 className="text-2xl font-bold">About</h1>
@@ -72,7 +71,6 @@ export default function AboutPage() {
           </ul>
         </div>
 
-        {/* Owner Image */}
         <div className="shrink-0 flex justify-center items-center">
           <Image
             src="/assets/owner.jpg"
