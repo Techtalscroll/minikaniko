@@ -41,16 +41,22 @@ export default function Header() {
           </SignInButton>
         </SignedOut>
         <SignedIn>
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: {
-                  width: "40px",
-                  height: "40px",
+          <div className="flex items-center gap-2">
+            <span className="font-semibold whitespace-nowrap">
+              {user?.firstName} {user?.lastName}
+            </span>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: {
+                    width: "40px",
+                    height: "40px",
+                  },
                 },
-              },
-            }}
-          />
+              }}
+            />
+            
+          </div>
         </SignedIn>
       </div>
     </header>
