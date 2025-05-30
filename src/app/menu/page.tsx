@@ -117,6 +117,19 @@ export default function MenuPage() {
     }
   }
 
+  // Add this function to handle address deletion:
+  async function handleDeleteAddress(addr: string) {
+    if (userId) {
+      await supabase
+        .from("user_addresses")
+        .delete()
+        .eq("user_id", userId)
+        .eq("address", addr);
+      setAddressList(prev => prev.filter(a => a !== addr));
+      if (address === addr) setAddress("");
+    }
+  }
+
   async function handleCheckout() {
     if (cart.length === 0) {
       alert("Your cart is empty.");
@@ -132,28 +145,27 @@ export default function MenuPage() {
     }
 
     // Get Clerk user info
-    const userName = user?.fullName || user?.username || user?.emailAddresses?.[0]?.emailAddress || "Unknown";
+    const userName = user?.username || user?.fullName || user?.emailAddresses?.[0]?.emailAddress || "Unknown";
+    const totalPrice = cart.reduce((sum, cartItem) => sum + cartItem.item.price * cartItem.quantity, 0);
 
     // Prepare order data
     const orderData = {
       user_id: userId,
       user_name: userName,
-      order_type: orderType,
-      address: orderType === "delivery" ? address : null,
-      pickup_location: orderType === "pickup" ? pickupLocation : null,
       items: cart.map(ci => ({
         id: ci.item.id,
         name: ci.item.name,
         price: ci.item.price,
         quantity: ci.quantity,
       })),
-      branch: orderType === "pickup" ? pickupLocation : (pickupLocation || "N/A"),
+      total_price: totalPrice,
+      address: orderType === "delivery" ? address : null,
+      created_at: new Date().toISOString(),
     };
 
-    // Save to Supabase
     const { error } = await supabase.from("orders").insert([orderData]);
     if (error) {
-      alert("Failed to place order.\n" + JSON.stringify(error, null, 2));
+      alert("Failed to place order.\n" + error.message);
       return;
     }
     alert("Order placed successfully!");
