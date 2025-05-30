@@ -56,6 +56,15 @@ export default function AdminDashboard() {
     setMenuItems(data || []);
   }
 
+  // Handle delete
+  async function handleDelete(id: number | undefined) {
+    if (!id) return;
+    await supabase.from("menu").delete().eq("id", id);
+    // Refresh menu items
+    const { data } = await supabase.from("menu").select("*");
+    setMenuItems(data || []);
+  }
+
   return (
     <main className="min-h-screen flex bg-gray-100">
       {/* Sidebar */}
@@ -184,6 +193,12 @@ export default function AdminDashboard() {
                       <br />
                       <span className="text-sm">{item.description}</span>
                     </div>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Delete
+                    </button>
                   </li>
                 ))}
               </ul>
