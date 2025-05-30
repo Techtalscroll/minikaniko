@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabaseClient";
-import { useUser } from "@clerk/clerk-react"; // If using Clerk
+import { useUser } from "@clerk/clerk-react";
 
 type MenuItem = {
   id: number;
@@ -23,7 +23,6 @@ const categories = ["Burger", "Drinks", "Sides", "Other Options"];
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("Burger");
-  // For demo, cart is just a count
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
@@ -199,7 +198,7 @@ export default function MenuPage() {
         {/* Menu Items */}
         <section className="flex-1 p-4 md:p-8 flex flex-col gap-4">
           <h2 className="text-2xl font-bold mb-4 text-white">Menu</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             {filteredItems.length === 0 && (
               <div className="text-white col-span-2">No items in this category.</div>
             )}
@@ -209,13 +208,13 @@ export default function MenuPage() {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-24 h-24 object-cover rounded mb-2"
+                    className="w-40 h-40 object-cover rounded mb-2"
                   />
                 )}
-                <div className="font-semibold">{item.name}</div>
-                <div className="text-gray-600">₱{item.price}</div>
-                <div className="text-xs text-gray-500 mb-2">{item.category}</div>
-                <div className="text-sm text-gray-700 mb-2">{item.description}</div>
+                <div className="text-black font-semibold">{item.name}</div>
+                <div className="text-black">₱{item.price}</div>
+                <div className="text-xs text-black mb-2">{item.category}</div>
+                <div className="text-sm text-black mb-2">{item.description}</div>
                 <button
                   className="mt-2 bg-black text-white px-3 py-1 rounded"
                   onClick={() => handleAddToCart(item)}
