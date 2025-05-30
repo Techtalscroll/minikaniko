@@ -28,7 +28,6 @@ type Order = {
   address: string;
   order_type: string;
   created_at: string;
-  status: string;
 };
 
 export default function AdminDashboard() {
@@ -149,34 +148,6 @@ export default function AdminDashboard() {
       description: item.description,
       id: item.id, // Add id to form for editing
     });
-  }
-
-  // 1. Update the Order type
-  type Order = {
-    id: number;
-    user_id: string;
-    user_name: string;
-    items: OrderItem[];
-    total_price: number;
-    address: string;
-    order_type: string;
-    created_at: string;
-    status: string; // <-- add this
-  };
-
-  // 2. Add the confirm handler
-  async function handleConfirmComplete(orderId: number) {
-    await supabase
-      .from("orders")
-      .update({ status: "complete" })
-      .eq("id", orderId);
-
-    // Refresh orders
-    const { data } = await supabase
-      .from("orders")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setOrders(data || []);
   }
 
   return (
@@ -323,8 +294,6 @@ export default function AdminDashboard() {
                       <th className="px-4 py-2 border">Items</th>
                       <th className="px-4 py-2 border">Total Price</th>
                       <th className="px-4 py-2 border">Date</th>
-                      <th className="px-4 py-2 border">Status</th>
-                      <th className="px-4 py-2 border">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -346,17 +315,6 @@ export default function AdminDashboard() {
                         <td className="px-4 py-2 border">₱{order.total_price}</td>
                         <td className="px-4 py-2 border">
                           {new Date(order.created_at).toLocaleString()}
-                        </td>
-                        <td className="px-4 py-2 border">{order.status || "pending"}</td>
-                        <td className="px-4 py-2 border">
-                          {order.status !== "complete" && (
-                            <button
-                              className="bg-green-600 text-white px-2 py-1 rounded"
-                              onClick={() => handleConfirmComplete(order.id)}
-                            >
-                              Confirm Complete
-                            </button>
-                          )}
                         </td>
                       </tr>
                     ))}
