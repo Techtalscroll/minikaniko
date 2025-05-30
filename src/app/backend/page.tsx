@@ -45,7 +45,9 @@ export default function AdminDashboard() {
   }, [activePage]);
 
   // Handle form input change
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
@@ -75,6 +77,10 @@ export default function AdminDashboard() {
   // Handle form submit
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (Number(form.price) < 0) {
+      alert("Price cannot be negative!");
+      return;
+    }
     if (form.id) {
       // Update
       await supabase.from("menu").update({
@@ -203,18 +209,24 @@ export default function AdminDashboard() {
                 className="border rounded px-3 py-2"
                 required
               />
-              <input
+              <select
                 name="category"
-                placeholder="Category"
                 value={form.category}
                 onChange={handleChange}
                 className="border rounded px-3 py-2"
                 required
-              />
+              >
+                <option value="">Select Category</option>
+                <option value="Burger">Burger</option>
+                <option value="Drinks">Drinks</option>
+                <option value="Sides">Sides</option>
+                <option value="Other Options">Other Options</option>
+              </select>
               <input
                 name="price"
                 placeholder="Price"
                 type="number"
+                min="0"
                 value={form.price}
                 onChange={handleChange}
                 className="border rounded px-3 py-2"
