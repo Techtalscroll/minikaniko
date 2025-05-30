@@ -2,13 +2,22 @@
 
 import { useState, useEffect } from "react";
 
+type MenuItem = {
+  _id?: string;
+  image: string;
+  name: string;
+  category: string;
+  price: number;
+  description: string;
+};
+
 export default function AdminDashboard() {
   const [activePage, setActivePage] = useState<
     "menu" | "orders1" | "orders2" | "orders3" | "orders4"
   >("menu");
 
-  // State for menu items and form
-  const [menuItems, setMenuItems] = useState<any[]>([]);
+  // Use MenuItem[] instead of any[]
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [form, setForm] = useState({
     image: "",
     name: "",
