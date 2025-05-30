@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { supabase } from "../../../lib/supabaseClient";
 
 type MenuItem = {
@@ -47,6 +47,29 @@ export default function AdminDashboard() {
   // Handle form input change
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  // Handle file upload to Supabase Storage
+  async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from("menu-images")
+      .upload(`public/${Date.now()}_${file.name}`, file);
+
+    if (error) {
+      alert("Image upload failed!");
+      return;
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from("menu-images")
+      .getPublicUrl(data.path);
+
+    setForm({ ...form, image: urlData.publicUrl });
   }
 
   // Handle form submit
@@ -160,14 +183,18 @@ export default function AdminDashboard() {
           <div>
             <h2 className="text-2xl font-bold mb-4">Menu Management System</h2>
             <form onSubmit={handleSubmit} className="mb-8 bg-white rounded p-4 shadow flex flex-col gap-4 max-w-lg">
+              {/* File picker for image */}
               <input
-                name="image"
-                placeholder="Image URL"
-                value={form.image}
-                onChange={handleChange}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
                 className="border rounded px-3 py-2"
-                required
+                required={!form.image}
               />
+              {/* Show preview if image is uploaded */}
+              {form.image && (
+                <img src={form.image} alt="Preview" className="w-24 h-24 object-cover rounded" />
+              )}
               <input
                 name="name"
                 placeholder="Name"
@@ -205,7 +232,7 @@ export default function AdminDashboard() {
                 type="submit"
                 className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
               >
-                Add Menu Item
+                {form.id ? "Update Menu Item" : "Add Menu Item"}
               </button>
             </form>
             <div>
