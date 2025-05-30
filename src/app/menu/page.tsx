@@ -12,14 +12,29 @@ type MenuItem = {
   description: string;
 };
 
+type CartItem = {
+  item: MenuItem;
+  quantity: number;
+};
+
 const categories = ["Burger", "Drinks", "Sides", "Other Options"];
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("Burger");
   // For demo, cart is just a count
-  const [cart, setCart] = useState<MenuItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
+  const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
+  const [address, setAddress] = useState('');
+  const [pickupLocation, setPickupLocation] = useState('');
+
+  const pickupLocations = [
+    "WJVH+Q7W, Lucena City, 4301 Quezon",
+    "XMCM+C87, J.P. Rizal, Pagbilao, 4302 Quezon",
+    "Sabang, Mauban, 4330 Quezon",
+    "Block 22 Lot 11, Welmanville II Subdivision, Lucena City, 4301 Quezon"
+  ];
 
   useEffect(() => {
     async function fetchMenu() {
@@ -35,7 +50,33 @@ export default function MenuPage() {
   );
 
   function handleAddToCart(item: MenuItem) {
-    setCart((prev) => [...prev, item]);
+    setCart((prev) => {
+      const idx = prev.findIndex((ci) => ci.item.id === item.id);
+      if (idx > -1) {
+        // Item already in cart, increment quantity
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], quantity: updated[idx].quantity + 1 };
+        return updated;
+      }
+      // New item
+      return [...prev, { item, quantity: 1 }];
+    });
+  }
+
+  function handleRemoveFromCart(idx: number) {
+    setCart((prev) => prev.filter((_, i) => i !== idx));
+  }
+
+  function handleQuantityChange(idx: number, value: number) {
+    if (value === 0) {
+      handleRemoveFromCart(idx);
+    } else if (value > 0 && !isNaN(value)) {
+      setCart((prev) => {
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], quantity: value };
+        return updated;
+      });
+    }
   }
 
   return (
@@ -114,17 +155,80 @@ export default function MenuPage() {
         <aside className="hidden md:flex w-1/4 bg-black/50 p-6 flex-col gap-4">
           <h2 className="font-bold mb-2">Cart</h2>
           {cart.length === 0 && <div className="text-gray-500">Cart is empty.</div>}
-          {cart.map((item, idx) => (
-            <div key={idx} className="flex justify-between items-center border-b pb-2">
-              <span>{item.name}</span>
-              <span>₱{item.price}</span>
+          {cart.map((cartItem, idx) => (
+            <div key={cartItem.item.id} className="flex justify-between items-center border-b pb-2 gap-2">
+              <span>{cartItem.item.name}</span>
+              <input
+                type="number"
+                min={1}
+                className="w-12 text-center border rounded"
+                value={cartItem.quantity}
+                onChange={e => handleQuantityChange(idx, parseInt(e.target.value, 10))}
+              />
+              <span>₱{cartItem.item.price * cartItem.quantity}</span>
+              <button
+                className="text-red-600 hover:underline text-xs"
+                onClick={() => handleRemoveFromCart(idx)}
+              >
+                Remove
+              </button>
             </div>
           ))}
           {/* Cart total */}
           <div className="mt-auto font-bold">
-            Total: ₱{cart.reduce((sum, item) => sum + item.price, 0)}
+            Total: ₱{cart.reduce((sum, cartItem) => sum + cartItem.item.price * cartItem.quantity, 0)}
           </div>
-          <button className="bg-green-600 text-white px-4 py-2 rounded mt-4">Checkout</button>
+          {/* Order Type Buttons */}
+          <div className="flex gap-2 mt-4 mb-2">
+            <button
+              type="button"
+              className={`px-4 py-2 rounded font-semibold transition ${
+                orderType === 'delivery'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white text-black border border-green-600'
+              }`}
+              onClick={() => setOrderType('delivery')}
+            >
+              Delivery
+            </button>
+            <button
+              type="button"
+              className={`px-4 py-2 rounded font-semibold transition ${
+                orderType === 'pickup'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white text-black border border-green-600'
+              }`}
+              onClick={() => setOrderType('pickup')}
+            >
+              Pick-up
+            </button>
+          </div>
+          {/* Conditional input for address or pickup location */}
+          {orderType === 'delivery' ? (
+            <input
+              type="text"
+              className="w-full border rounded px-3 py-2 mb-2"
+              placeholder="Enter your address"
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+              required
+            />
+          ) : (
+            <select
+              className="w-full border rounded px-3 py-2 mb-2"
+              value={pickupLocation}
+              onChange={e => setPickupLocation(e.target.value)}
+              required
+            >
+              <option value="">Select pickup location</option>
+              {pickupLocations.map(loc => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+          )}
+          <button className="bg-green-600 text-white px-4 py-2 rounded mt-2 w-full">
+            Checkout
+          </button>
         </aside>
       </div>
 
@@ -150,15 +254,75 @@ export default function MenuPage() {
               <button onClick={() => setShowCart(false)} className="text-xl font-bold">&times;</button>
             </div>
             {cart.length === 0 && <div className="text-gray-500">Cart is empty.</div>}
-            {cart.map((item, idx) => (
-              <div key={idx} className="flex justify-between items-center border-b pb-2">
-                <span>{item.name}</span>
-                <span>₱{item.price}</span>
+            {cart.map((cartItem, idx) => (
+              <div key={cartItem.item.id} className="flex justify-between items-center border-b pb-2 gap-2">
+                <span>{cartItem.item.name}</span>
+                <input
+                  type="number"
+                  min={1}
+                  className="w-12 text-center border rounded"
+                  value={cartItem.quantity}
+                  onChange={e => handleQuantityChange(idx, parseInt(e.target.value, 10))}
+                />
+                <span>₱{cartItem.item.price * cartItem.quantity}</span>
+                <button
+                  className="text-red-400 hover:underline text-xs"
+                  onClick={() => handleRemoveFromCart(idx)}
+                >
+                  Remove
+                </button>
               </div>
             ))}
             <div className="mt-4 font-bold">
-              Total: ₱{cart.reduce((sum, item) => sum + item.price, 0)}
+              Total: ₱{cart.reduce((sum, cartItem) => sum + cartItem.item.price * cartItem.quantity, 0)}
             </div>
+            <div className="flex gap-2 mt-4 mb-2">
+              <button
+                type="button"
+                className={`px-4 py-2 rounded font-semibold transition ${
+                  orderType === 'delivery'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white text-black border border-green-600'
+                }`}
+                onClick={() => setOrderType('delivery')}
+              >
+                Delivery
+              </button>
+              <button
+                type="button"
+                className={`px-4 py-2 rounded font-semibold transition ${
+                  orderType === 'pickup'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white text-black border border-green-600'
+                }`}
+                onClick={() => setOrderType('pickup')}
+              >
+                Pick-up
+              </button>
+            </div>
+            {/* Conditional input for address or pickup location */}
+            {orderType === 'delivery' ? (
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2 mb-2"
+                placeholder="Enter your address"
+                value={address}
+                onChange={e => setAddress(e.target.value)}
+                required
+              />
+            ) : (
+              <select
+                className="w-full border rounded px-3 py-2 mb-2"
+                value={pickupLocation}
+                onChange={e => setPickupLocation(e.target.value)}
+                required
+              >
+                <option value="">Select pickup location</option>
+                {pickupLocations.map(loc => (
+                  <option key={loc} value={loc}>{loc}</option>
+                ))}
+              </select>
+            )}
             <button className="bg-green-600 text-white px-4 py-2 rounded mt-4 w-full">
               Checkout
             </button>
