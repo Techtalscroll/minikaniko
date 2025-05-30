@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabaseClient";
+import { useUser } from "@clerk/clerk-react"; // If using Clerk
 
 type MenuItem = {
   id: number;
@@ -29,7 +30,8 @@ export default function MenuPage() {
   const [addressList, setAddressList] = useState<string[]>([""]);
   const [address, setAddress] = useState("");
   const [pickupLocation, setPickupLocation] = useState('');
-  const [userId, setUserId] = useState<string | null>(null); // Add userId state
+  const { user } = useUser();
+  const userId = user?.id;
 
   const pickupLocations = [
     "WJVH+Q7W, Lucena City, 4301 Quezon",
@@ -46,11 +48,19 @@ export default function MenuPage() {
     fetchMenu();
   }, []);
 
-  // Load address list from localStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem("addressList");
-    if (saved) setAddressList(JSON.parse(saved));
-  }, []);
+    if (!userId) return;
+    async function fetchAddresses() {
+      const { data, error } = await supabase
+        .from("user_addresses")
+        .select("address")
+        .eq("user_id", userId);
+      if (!error && data) {
+        setAddressList(data.map(row => row.address));
+      }
+    }
+    fetchAddresses();
+  }, [userId]);
 
   // Save address list to localStorage on change
   useEffect(() => {
