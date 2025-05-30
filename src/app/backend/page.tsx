@@ -1,11 +1,50 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AdminDashboard() {
   const [activePage, setActivePage] = useState<
     "menu" | "orders1" | "orders2" | "orders3" | "orders4"
   >("menu");
+
+  // State for menu items and form
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [form, setForm] = useState({
+    image: "",
+    name: "",
+    category: "",
+    price: "",
+    description: "",
+  });
+
+  // Fetch menu items on mount or after adding
+  useEffect(() => {
+    if (activePage === "menu") {
+      fetch("/api/menu")
+        .then((res) => res.json())
+        .then(setMenuItems);
+    }
+  }, [activePage]);
+
+  // Handle form input change
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  // Handle form submit
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    await fetch("/api/menu", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, price: Number(form.price) }),
+    });
+    setForm({ image: "", name: "", category: "", price: "", description: "" });
+    // Refresh menu items
+    fetch("/api/menu")
+      .then((res) => res.json())
+      .then(setMenuItems);
+  }
 
   return (
     <main className="min-h-screen flex bg-gray-100">
@@ -31,7 +70,7 @@ export default function AdminDashboard() {
         >
           Lucena Order Dashboard
         </button>
-                <button
+        <button
           className={`text-left px-4 py-2 rounded font-semibold transition ${
             activePage === "orders2"
               ? "bg-white text-black"
@@ -41,7 +80,7 @@ export default function AdminDashboard() {
         >
           Mauban Order Dashboard
         </button>
-                <button
+        <button
           className={`text-left px-4 py-2 rounded font-semibold transition ${
             activePage === "orders3"
               ? "bg-white text-black"
@@ -51,7 +90,7 @@ export default function AdminDashboard() {
         >
           Pagbilao Order Dashboard
         </button>
-                <button
+        <button
           className={`text-left px-4 py-2 rounded font-semibold transition ${
             activePage === "orders4"
               ? "bg-white text-black"
@@ -68,35 +107,90 @@ export default function AdminDashboard() {
         {activePage === "menu" && (
           <div>
             <h2 className="text-2xl font-bold mb-4">Menu Management System</h2>
-            {/* Menu management content goes here */}
-            <p>Manage your menu items here.</p>
+            <form onSubmit={handleSubmit} className="mb-8 bg-white rounded p-4 shadow flex flex-col gap-4 max-w-lg">
+              <input
+                name="image"
+                placeholder="Image URL"
+                value={form.image}
+                onChange={handleChange}
+                className="border rounded px-3 py-2"
+                required
+              />
+              <input
+                name="name"
+                placeholder="Name"
+                value={form.name}
+                onChange={handleChange}
+                className="border rounded px-3 py-2"
+                required
+              />
+              <input
+                name="category"
+                placeholder="Category"
+                value={form.category}
+                onChange={handleChange}
+                className="border rounded px-3 py-2"
+                required
+              />
+              <input
+                name="price"
+                placeholder="Price"
+                type="number"
+                value={form.price}
+                onChange={handleChange}
+                className="border rounded px-3 py-2"
+                required
+              />
+              <textarea
+                name="description"
+                placeholder="Description"
+                value={form.description}
+                onChange={handleChange}
+                className="border rounded px-3 py-2"
+                required
+              />
+              <button
+                type="submit"
+                className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+              >
+                Add Menu Item
+              </button>
+            </form>
+            <div>
+              <h3 className="font-bold mb-2">Current Menu Items:</h3>
+              <ul>
+                {menuItems.map((item) => (
+                  <li key={item._id} className="mb-2 border-b pb-2">
+                    <span className="font-semibold">{item.name}</span> — {item.category} — ₱{item.price}
+                    <br />
+                    <span className="text-sm">{item.description}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
         {activePage === "orders1" && (
           <div>
             <h2 className="text-2xl font-bold mb-4">Lucena Order Dashboard</h2>
-            {/* Order dashboard content goes here */}
             <p>View and manage orders here.</p>
           </div>
         )}
-                {activePage === "orders2" && (
+        {activePage === "orders2" && (
           <div>
             <h2 className="text-2xl font-bold mb-4">Mauban Order Dashboard</h2>
-            {/* Order dashboard content goes here */}
             <p>View and manage orders here.</p>
           </div>
         )}
-                {activePage === "orders3" && (
+        {activePage === "orders3" && (
           <div>
             <h2 className="text-2xl font-bold mb-4">Pagbilao Order Dashboard</h2>
-            {/* Order dashboard content goes here */}
             <p>View and manage orders here.</p>
           </div>
         )}
-                {activePage === "orders4" && (
+        {activePage === "orders4" && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">San Papblo Order Dashboard</h2>
-            {/* Order dashboard content goes here */}
+            <h2 className="text-2xl font-bold mb-4">San Pablo Order Dashboard</h2>
             <p>View and manage orders here.</p>
           </div>
         )}
