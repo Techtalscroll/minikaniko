@@ -130,6 +130,51 @@ export default function MenuPage() {
     }
   }
 
+  async function handleCheckout() {
+    if (cart.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+    if (orderType === "delivery" && !address) {
+      alert("Please select a delivery address.");
+      return;
+    }
+    if (orderType === "pickup" && !pickupLocation) {
+      alert("Please select a pickup location.");
+      return;
+    }
+
+    // Get Clerk user info
+    const userName = user?.fullName || user?.username || user?.emailAddresses?.[0]?.emailAddress || "Unknown";
+
+    // Prepare order data
+    const orderData = {
+      user_id: userId,
+      user_name: userName,
+      order_type: orderType,
+      address: orderType === "delivery" ? address : null,
+      pickup_location: orderType === "pickup" ? pickupLocation : null,
+      items: cart.map(ci => ({
+        id: ci.item.id,
+        name: ci.item.name,
+        price: ci.item.price,
+        quantity: ci.quantity,
+      })),
+      branch: orderType === "pickup" ? pickupLocation : (pickupLocation || "N/A"),
+    };
+
+    // Save to Supabase
+    const { error } = await supabase.from("orders").insert([orderData]);
+    if (error) {
+      alert("Failed to place order. Please try again.");
+      return;
+    }
+    alert("Order placed successfully!");
+    setCart([]);
+    setAddress("");
+    setPickupLocation("");
+  }
+
   return (
     <main
       className="min-h-screen w-full bg-cover bg-center bg-no-repeat"
@@ -278,18 +323,17 @@ export default function MenuPage() {
                   ))}
                 </select>
               </div>
-              {/* Show delete button for selected address */}
-              {address && (
-                <div className="flex items-center gap-2 mt-1">
-                  <button
-                    type="button"
-                    className="text-red-600 hover:underline text-xs"
-                    onClick={() => handleDeleteAddress(address)}
-                  >
-                    Delete this address
-                  </button>
-                </div>
-              )}
+              <select
+                className="w-full border rounded px-3 py-2 mt-2"
+                value={pickupLocation}
+                onChange={e => setPickupLocation(e.target.value)}
+                required
+              >
+                <option value="">Select branch location</option>
+                {pickupLocations.map(loc => (
+                  <option key={loc} value={loc}>{loc}</option>
+                ))}
+              </select>
             </div>
           ) : (
             <select
@@ -304,7 +348,10 @@ export default function MenuPage() {
               ))}
             </select>
           )}
-          <button className="bg-green-600 text-white px-4 py-2 rounded mt-2 w-full">
+          <button
+            className="bg-green-600 text-white px-4 py-2 rounded mt-2 w-full"
+            onClick={handleCheckout}
+          >
             Checkout
           </button>
         </aside>
@@ -414,7 +461,10 @@ export default function MenuPage() {
                 ))}
               </select>
             )}
-            <button className="bg-green-600 text-white px-4 py-2 rounded mt-4 w-full">
+            <button
+              className="bg-green-600 text-white px-4 py-2 rounded mt-4 w-full"
+              onClick={handleCheckout}
+            >
               Checkout
             </button>
           </div>
