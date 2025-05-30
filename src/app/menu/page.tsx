@@ -26,8 +26,10 @@ export default function MenuPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
-  const [address, setAddress] = useState('');
+  const [addressList, setAddressList] = useState<string[]>([""]);
+  const [address, setAddress] = useState("");
   const [pickupLocation, setPickupLocation] = useState('');
+  const [userId, setUserId] = useState<string | null>(null); // Add userId state
 
   const pickupLocations = [
     "WJVH+Q7W, Lucena City, 4301 Quezon",
@@ -43,6 +45,17 @@ export default function MenuPage() {
     }
     fetchMenu();
   }, []);
+
+  // Load address list from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("addressList");
+    if (saved) setAddressList(JSON.parse(saved));
+  }, []);
+
+  // Save address list to localStorage on change
+  useEffect(() => {
+    localStorage.setItem("addressList", JSON.stringify(addressList));
+  }, [addressList]);
 
   // Filter menu items by selected category
   const filteredItems = menuItems.filter(
@@ -76,6 +89,34 @@ export default function MenuPage() {
         updated[idx] = { ...updated[idx], quantity: value };
         return updated;
       });
+    }
+  }
+
+  // Handler for adding a new address
+  async function handleAddAddress() {
+    const newAddress = prompt("Enter new delivery address:");
+    if (newAddress && !addressList.includes(newAddress) && userId) {
+      // Save to Supabase
+      const { error } = await supabase
+        .from("user_addresses")
+        .insert([{ user_id: userId, address: newAddress }]);
+      if (!error) {
+        setAddressList(prev => [...prev, newAddress]);
+        setAddress(newAddress);
+      }
+    }
+  }
+
+  // Add this function to handle address deletion:
+  async function handleDeleteAddress(addr: string) {
+    if (userId) {
+      await supabase
+        .from("user_addresses")
+        .delete()
+        .eq("user_id", userId)
+        .eq("address", addr);
+      setAddressList(prev => prev.filter(a => a !== addr));
+      if (address === addr) setAddress("");
     }
   }
 
@@ -205,14 +246,41 @@ export default function MenuPage() {
           </div>
           {/* Conditional input for address or pickup location */}
           {orderType === 'delivery' ? (
-            <input
-              type="text"
-              className="w-full border rounded px-3 py-2 mb-2"
-              placeholder="Enter your address"
-              value={address}
-              onChange={e => setAddress(e.target.value)}
-              required
-            />
+            <div className="flex flex-col gap-1 mb-2">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="bg-black text-white px-2 py-1 rounded text-lg"
+                  onClick={handleAddAddress}
+                  title="Add new address"
+                >
+                  +
+                </button>
+                <select
+                  className="flex-1 border rounded px-3 py-2"
+                  value={address}
+                  onChange={e => setAddress(e.target.value)}
+                  required
+                >
+                  <option value="">Select delivery address</option>
+                  {addressList.filter(a => a).map(addr => (
+                    <option key={addr} value={addr}>{addr}</option>
+                  ))}
+                </select>
+              </div>
+              {/* Show delete button for selected address */}
+              {address && (
+                <div className="flex items-center gap-2 mt-1">
+                  <button
+                    type="button"
+                    className="text-red-600 hover:underline text-xs"
+                    onClick={() => handleDeleteAddress(address)}
+                  >
+                    Delete this address
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <select
               className="w-full border rounded px-3 py-2 mb-2"
@@ -302,14 +370,27 @@ export default function MenuPage() {
             </div>
             {/* Conditional input for address or pickup location */}
             {orderType === 'delivery' ? (
-              <input
-                type="text"
-                className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Enter your address"
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                required
-              />
+              <div className="flex items-center gap-2 mb-2">
+                <button
+                  type="button"
+                  className="bg-black text-white px-2 py-1 rounded text-lg"
+                  onClick={handleAddAddress}
+                  title="Add new address"
+                >
+                  +
+                </button>
+                <select
+                  className="flex-1 border rounded px-3 py-2"
+                  value={address}
+                  onChange={e => setAddress(e.target.value)}
+                  required
+                >
+                  <option value="">Select delivery address</option>
+                  {addressList.filter(a => a).map(addr => (
+                    <option key={addr} value={addr}>{addr}</option>
+                  ))}
+                </select>
+              </div>
             ) : (
               <select
                 className="w-full border rounded px-3 py-2 mb-2"
