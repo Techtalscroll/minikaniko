@@ -18,7 +18,15 @@ export default function AdminDashboard() {
   >("menu");
 
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    id: number | undefined;
+    image: string;
+    name: string;
+    category: string;
+    price: string;
+    description: string;
+  }>({
+    id: undefined,
     image: "",
     name: "",
     category: "",
@@ -44,14 +52,28 @@ export default function AdminDashboard() {
   // Handle form submit
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await supabase.from("menu").insert([
-      {
-        ...form,
+    if (form.id) {
+      // Update
+      await supabase.from("menu").update({
+        image: form.image,
+        name: form.name,
+        category: form.category,
         price: Number(form.price),
-      },
-    ]);
-    setForm({ image: "", name: "", category: "", price: "", description: "" });
-    // Refresh menu items
+        description: form.description,
+      }).eq("id", form.id);
+    } else {
+      // Insert
+      await supabase.from("menu").insert([
+        {
+          image: form.image,
+          name: form.name,
+          category: form.category,
+          price: Number(form.price),
+          description: form.description,
+        },
+      ]);
+    }
+    setForm({ id: undefined, image: "", name: "", category: "", price: "", description: "" });
     const { data } = await supabase.from("menu").select("*");
     setMenuItems(data || []);
   }
@@ -63,6 +85,17 @@ export default function AdminDashboard() {
     // Refresh menu items
     const { data } = await supabase.from("menu").select("*");
     setMenuItems(data || []);
+  }
+
+  function handleEdit(item: MenuItem) {
+    setForm({
+      image: item.image,
+      name: item.name,
+      category: item.category,
+      price: String(item.price),
+      description: item.description,
+      id: item.id, // Add id to form for editing
+    });
   }
 
   return (
@@ -180,7 +213,6 @@ export default function AdminDashboard() {
               <ul>
                 {menuItems.map((item) => (
                   <li key={item.id} className="mb-2 border-b pb-2 flex items-center gap-4">
-                    {/* Show image if present */}
                     {item.image && (
                       <img
                         src={item.image}
@@ -188,14 +220,20 @@ export default function AdminDashboard() {
                         className="w-16 h-16 object-cover rounded"
                       />
                     )}
-                    <div>
+                    <div className="flex-1">
                       <span className="font-semibold">{item.name}</span> — {item.category} — ₱{item.price}
                       <br />
                       <span className="text-sm">{item.description}</span>
                     </div>
                     <button
+                      className="ml-2 px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                      onClick={() => handleEdit(item)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                       onClick={() => handleDelete(item.id)}
-                      className="text-red-600 hover:text-red-800"
                     >
                       Delete
                     </button>
