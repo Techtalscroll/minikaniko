@@ -6,7 +6,7 @@ import Image from "next/image";
 export default function Header() {
   const { user } = useUser();
 
-  const adminUserIds = ["user_2xI04m4SHvM     9JyKPQ9BlV5V1DNT"];
+  const adminUserIds = ["user_2xI04m4SHvM9JyKPQ9BlV5V1DNT"];
 
   return (
     <header className="bg-black text-white px-10 py-2 flex items-center justify-between">
