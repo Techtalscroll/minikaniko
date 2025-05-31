@@ -142,25 +142,6 @@ export default function AdminDashboard() {
     });
   }
 
-  async function handleConfirmComplete(orderId: number) {
-    const { error } = await supabase
-      .from("orders")
-      .update({ status: "complete" })
-      .eq("id", orderId);
-
-    if (error) {
-      alert("Failed to update order: " + error.message);
-      return;
-    }
-
-    // Refresh orders
-    const { data } = await supabase
-      .from("orders")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setOrders(data || []);
-  }
-
   return (
     <main className="min-h-screen flex bg-gray-100">
       <aside className="w-64 bg-black text-white flex flex-col p-6 gap-4">
