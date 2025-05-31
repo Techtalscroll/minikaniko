@@ -198,7 +198,7 @@ export default function MenuPage() {
         {/* Menu Items */}
         <section className="flex-1 p-4 md:p-8 flex flex-col gap-4">
           <h2 className="text-2xl font-bold mb-4 text-white">Menu</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {filteredItems.length === 0 && (
               <div className="text-white col-span-2">No items in this category.</div>
             )}
